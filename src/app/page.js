@@ -1,65 +1,139 @@
-import Image from "next/image";
+import SiteNav from "@/components/SiteNav";
+import SmoothLink from "@/components/SmoothLink";
+import { neighborhoods } from "@/data/neighborhoods";
+
+const featureCards = [
+  {
+    title: "Housing pressure",
+    body: "Compare rent or mortgage costs against take-home income and monthly savings goals.",
+  },
+  {
+    title: "Commute tradeoffs",
+    body: "Layer transportation costs and commute estimates into the affordability picture.",
+  },
+  {
+    title: "Neighborhood fit",
+    body: "Rank San Diego-area neighborhoods by modeled financial stability and risk.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen overflow-hidden bg-[#081210] text-slate-100">
+      <SiteNav />
+
+      <section className="motion-section relative isolate flex min-h-[88vh] items-end px-5 pb-14 pt-28 sm:px-8">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_22%_20%,rgba(52,211,153,0.18),transparent_28%),radial-gradient(circle_at_80%_15%,rgba(251,191,36,0.13),transparent_26%),linear-gradient(135deg,#081210,#10201d_56%,#202719)]" />
+        <div className="absolute inset-0 -z-10 opacity-50">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:80px_80px]" />
+          {neighborhoods.slice(0, 30).map((item) => (
+            <span
+              key={item.name}
+              className="absolute h-2 w-2 rounded-full bg-emerald-200/70 shadow-[0_0_22px_rgba(110,231,183,0.45)]"
+              style={{ left: `${item.x}%`, top: `${item.y}%` }}
+              title={item.name}
+            />
+          ))}
+        </div>
+
+        <div className="mx-auto w-full max-w-7xl">
+          <div className="max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-amber-200">
+              Civic-tech housing affordability platform
+            </p>
+            <h1 className="mt-5 text-5xl font-semibold tracking-tight text-slate-50 sm:text-7xl">
+              Understand the real cost of where you live.
+            </h1>
+            <p className="mt-6 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
+              Affordability Labs models housing costs, commute costs,
+              neighborhood tradeoffs, savings pressure, and affordability risk
+              in one public-facing tool.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <SmoothLink
+                href="/calculator"
+                className="official-button inline-flex h-12 items-center justify-center rounded-md bg-emerald-300 px-5 text-sm font-black text-[#081210] hover:bg-amber-200"
+              >
+                Run a housing scenario
+              </SmoothLink>
+              <SmoothLink
+                href="/methodology"
+                className="official-button inline-flex h-12 items-center justify-center rounded-md border border-white/[0.15] bg-white/[0.08] px-5 text-sm font-bold text-slate-100 hover:bg-white/[0.12]"
+              >
+                Review methodology
+              </SmoothLink>
+            </div>
+          </div>
+
+          <div className="mt-12 grid max-w-3xl grid-cols-3 gap-3">
+            <div className="rounded-lg border border-white/10 bg-white/[0.06] p-4 backdrop-blur">
+              <strong className="block text-2xl text-slate-50">42</strong>
+              <span className="text-sm text-slate-400">areas modeled</span>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-white/[0.06] p-4 backdrop-blur">
+              <strong className="block text-2xl text-slate-50">3</strong>
+              <span className="text-sm text-slate-400">risk bands</span>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-white/[0.06] p-4 backdrop-blur">
+              <strong className="block text-2xl text-slate-50">1</strong>
+              <span className="text-sm text-slate-400">monthly model</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="motion-section motion-delay-1 border-y border-white/10 bg-[#0b1715] px-5 py-14 sm:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">
+              Mission
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
+              Affordability is more than rent.
+            </h2>
+          </div>
+          <p className="max-w-3xl text-base leading-7 text-slate-400">
+            Many households choose housing based on rent or mortgage alone, but
+            real affordability also depends on transportation, debt, utilities,
+            savings goals, commute time, and neighborhood access. This platform
+            makes those tradeoffs easier to see.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="motion-section motion-delay-2 mx-auto grid w-full max-w-7xl gap-5 px-5 py-16 sm:px-8 md:grid-cols-3">
+        {featureCards.map((card) => (
+          <article key={card.title} className="official-card rounded-lg p-5">
+            <h2 className="text-xl font-semibold text-slate-50">{card.title}</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{card.body}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="motion-section motion-delay-3 mx-auto w-full max-w-7xl px-5 pb-20 sm:px-8">
+        <div className="official-card rounded-lg border-emerald-300/20 p-6 sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">
+            Calculator
+          </p>
+          <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-50">
+                The working calculator is now a dedicated route.
+              </h2>
+              <p className="mt-3 max-w-3xl text-base leading-7 text-slate-400">
+                Use it to enter monthly income, housing cost, utilities,
+                transportation, debt, savings goals, and neighborhood assumptions.
+              </p>
+            </div>
+            <SmoothLink
+              href="/calculator"
+              className="official-button inline-flex h-12 items-center justify-center rounded-md bg-slate-100 px-5 text-sm font-black text-[#081210] hover:bg-amber-200"
+            >
+              Try the calculator
+            </SmoothLink>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
