@@ -7,6 +7,7 @@ export default function useHUDRents() {
     rentData: null,
     loading: true,
     error: null,
+    lastChecked: null,
     lastUpdated: null,
     isFallback: false,
   });
@@ -29,6 +30,7 @@ export default function useHUDRents() {
           rentData: payload.rentData || null,
           loading: false,
           error: payload.error || null,
+          lastChecked: payload.lastChecked || payload.lastUpdated || null,
           lastUpdated: payload.lastUpdated || null,
           isFallback: Boolean(payload.isFallback),
         });
@@ -39,6 +41,7 @@ export default function useHUDRents() {
           rentData: null,
           loading: false,
           error: "HUD rent data could not be loaded.",
+          lastChecked: new Date().toISOString(),
           lastUpdated: null,
           isFallback: true,
         });
