@@ -51,6 +51,7 @@ export default function AffordabilityCalculator() {
           <div className="mt-6">
             <DataLastUpdatedBadge
               isFallback={hudRents.isFallback}
+              lastChecked={hudRents.lastChecked}
               lastUpdated={hudRents.lastUpdated}
               loading={hudRents.loading}
             />
@@ -89,6 +90,7 @@ export default function AffordabilityCalculator() {
               </div>
               <DataLastUpdatedBadge
                 isFallback={hudRents.isFallback}
+                lastChecked={hudRents.lastChecked}
                 lastUpdated={hudRents.lastUpdated}
                 loading={hudRents.loading}
               />

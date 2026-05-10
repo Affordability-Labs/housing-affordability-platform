@@ -76,7 +76,13 @@ function buildRentData({ bedroomRents, year, areaName, source }) {
   };
 }
 
+function getCheckedAt() {
+  return new Date().toISOString();
+}
+
 function fallbackResponse(reason, debug = {}) {
+  const checkedAt = getCheckedAt();
+
   return {
     rentData: buildRentData({
       bedroomRents: FALLBACK_HUD_2024_SAN_DIEGO,
@@ -84,7 +90,8 @@ function fallbackResponse(reason, debug = {}) {
       areaName: "San Diego County, CA",
       source: "FY 2024 fallback HUD FMR values",
     }),
-    lastUpdated: "FY 2024 fallback",
+    lastChecked: checkedAt,
+    lastUpdated: checkedAt,
     isFallback: true,
     error: reason,
     endpointUsed: debug.endpointUsed || null,
@@ -110,6 +117,8 @@ function hudHeaders(token) {
   };
 }
 
+// HUD fetch utility: token stays on the server route, and only sanitized JSON
+// is returned to the client-side calculator hook.
 async function fetchHUDJson(path, token) {
   const endpointUsed = `${HUD_FMR_BASE_URL}${path}`;
   const response = await fetch(endpointUsed, {
@@ -237,11 +246,18 @@ async function fetchFMRData(entityId, token) {
   };
 }
 
+function getHUDToken() {
+  return cleanHUDToken(
+    process.env.HUD_API_TOKEN || process.env.NEXT_PUBLIC_HUD_API_TOKEN
+  );
+}
+
 export async function getHUDRents() {
-  const token = cleanHUDToken(process.env.HUD_API_TOKEN);
+  const token = getHUDToken();
 
   if (!token) {
-    return fallbackResponse("HUD_API_TOKEN is not configured.");
+    // Fallback keeps the calculator usable if the token is missing or invalid.
+    return fallbackResponse("HUD API token is not configured.");
   }
 
   const attemptedEntityIds = [];
@@ -262,6 +278,7 @@ export async function getHUDRents() {
 
     if (firstResult.ok) {
       const data = firstResult.payload?.data;
+      const checkedAt = getCheckedAt();
 
       return {
         rentData: {
@@ -278,7 +295,8 @@ export async function getHUDRents() {
           entityId: firstResult.entityId,
           attemptedEntityIds,
         },
-        lastUpdated: new Date().toISOString(),
+        lastChecked: checkedAt,
+        lastUpdated: checkedAt,
         isFallback: false,
         error: null,
       };
@@ -306,6 +324,7 @@ export async function getHUDRents() {
       }
 
       const data = result.payload?.data;
+      const checkedAt = getCheckedAt();
 
       return {
         rentData: {
@@ -322,7 +341,8 @@ export async function getHUDRents() {
           entityId: result.entityId,
           attemptedEntityIds,
         },
-        lastUpdated: new Date().toISOString(),
+        lastChecked: checkedAt,
+        lastUpdated: checkedAt,
         isFallback: false,
         error: null,
       };

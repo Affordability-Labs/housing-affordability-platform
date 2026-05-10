@@ -64,7 +64,7 @@ This platform makes those tradeoffs easier to see by turning common monthly budg
 
 ## HUD_API_TOKEN
 
-The project uses `HUD_API_TOKEN` on the server side to request HUD Fair Market Rent data from the HUD User API.
+The project uses `HUD_API_TOKEN` on the server side to request HUD Fair Market Rent data from the HUD User API. It also supports `NEXT_PUBLIC_HUD_API_TOKEN` for compatibility, but `HUD_API_TOKEN` is preferred so the token stays server-only.
 
 Add the token to `.env.local`:
 
