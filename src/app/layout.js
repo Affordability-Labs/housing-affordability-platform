@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,7 +18,7 @@ export const metadata = {
     template: "%s | Affordability Labs",
   },
   description:
-    "A civic-tech housing affordability platform for rent, commute, savings, and neighborhood tradeoff analysis.",
+    "A civic-tech housing affordability platform for rent, commute, savings, and neighborhood tradeoff analysis in San Diego.",
 };
 
 export default function RootLayout({ children }) {
@@ -26,7 +27,10 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#081210] text-slate-100">{children}</body>
+      <body className="flex min-h-full flex-col bg-[#060e0c] text-slate-100">
+        <div className="flex flex-1 flex-col">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }
