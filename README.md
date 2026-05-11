@@ -1,189 +1,184 @@
 # Affordability Labs
 
-A Next.js housing affordability platform for modeling the full monthly cost of living in San Diego-area neighborhoods.
-
-Affordability Labs helps users compare rent or mortgage costs, transportation pressure, utilities, debt, savings goals, commute tradeoffs, and neighborhood fit in one transparent planning tool. The project is designed as a civic-tech portfolio application: polished enough for public review, but clear about its assumptions and limitations.
+A dark, glassy, civic-tech housing affordability platform for modeling the full monthly cost of living in San Diego-area neighborhoods. Built with Next.js 16, React 19, and Tailwind CSS 4.
 
 ## Mission
 
 Housing affordability is more than the rent number. A household can look affordable on paper while still becoming financially unstable after commute costs, utilities, debt payments, savings goals, and neighborhood-specific tradeoffs are included.
 
-This platform makes those tradeoffs easier to see by turning common monthly budget inputs into a practical affordability score, risk band, and neighborhood comparison.
+Affordability Labs makes those five dimensions visible together — before a housing decision is made. The platform is built as a civic-tech, public-interest planning tool: transparent about its assumptions, clear about its limitations, and designed to surface real tradeoffs.
 
 ## Features
 
-- Interactive affordability calculator for monthly income, housing cost, utilities, transportation, debt, savings, household size, roommates, work location, commute preference, and financial priority.
-- Neighborhood fit rankings for San Diego-area communities using modeled rent, commute, and priority assumptions.
-- Risk classification with stable, stretched, and high-risk bands.
-- Expense breakdown and scenario comparison views.
-- HUD Fair Market Rent baseline panel for San Diego County rents.
-- Automatic fallback to bundled FY 2024 HUD values when the HUD API token is missing or live data is unavailable.
-- Methodology page explaining the model, assumptions, and verification needs.
-- Responsive, portfolio-ready Next.js interface.
+- **Affordability Calculator** — Enter monthly income, housing cost, utilities, transportation, debt, savings goals, neighborhood, work location, commute preference, roommates, household size, and financial priority. The model returns a risk score (0–100), risk band (Stable / Stretched / High Risk), warnings, leftover estimate, and plain-English interpretation.
+- **Neighborhood Explorer** — 42 San Diego-area neighborhoods with rent estimates, category, transportation profile, and affordability tags, sorted by rent.
+- **Commute Cost Analysis** — Three concrete scenarios holding income constant and varying only the neighborhood rent and modeled commute time — showing how a longer commute can erase rent savings.
+- **Scenario Comparison** — Four pre-built side-by-side scenarios across income brackets and neighborhood types, using the same underlying affordability model.
+- **Methodology** — Full documentation of the scoring model, data sources, risk bands, commute pressure formula, and verification requirements.
+- **About** — Mission statement, platform principles, who the tool is designed for, and honest limitation disclosures.
+- **HUD Fair Market Rent integration** — Live San Diego County HUD FMR data via the HUD User API, with automatic fallback to bundled FY 2024 values when the API is unavailable.
+- **Responsive, polished dark glass visual system** — Parallax-style hero sections, glassmorphism cards, animated orbs, smooth hover states, and sticky glass navbar.
 
 ## Tech Stack
 
-- Next.js 16 with the App Router
-- React 19
-- Tailwind CSS 4
-- ESLint 9 with Next.js config
-- HUD Fair Market Rent API integration through a Next.js API route
-- Local static neighborhood assumptions in `src/data/neighborhoods.js`
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| UI | React 19 |
+| Styling | Tailwind CSS 4 |
+| Fonts | Geist Sans + Geist Mono |
+| Data | HUD Fair Market Rent API + static neighborhood assumptions |
+| Lint | ESLint 9 with Next.js config |
 
 ## Setup
 
-1. Install dependencies:
+### 1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-2. Create a local environment file:
+### 2. Configure environment
 
-   ```powershell
-   Copy-Item .env.local.example .env.local
-   ```
+```bash
+cp .env.local.example .env.local
+```
 
-3. Add your HUD API token to `.env.local`:
-
-   ```env
-   HUD_API_TOKEN=your_hud_api_token_here
-   ```
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open the app:
-
-   ```text
-   http://localhost:3000
-   ```
-
-## HUD_API_TOKEN
-
-The project uses `HUD_API_TOKEN` on the server side to request HUD Fair Market Rent data from the HUD User API. It also supports `NEXT_PUBLIC_HUD_API_TOKEN` for compatibility, but `HUD_API_TOKEN` is preferred so the token stays server-only.
-
-Add the token to `.env.local`:
+Edit `.env.local` and add your HUD API token:
 
 ```env
 HUD_API_TOKEN=your_hud_api_token_here
 ```
 
-Important notes:
+The app runs without a token. When no token is present, `/api/hud-rents` returns bundled FY 2024 HUD FMR fallback values and the calculator's data badge shows "Fallback data".
 
-- Do not commit `.env.local`.
-- Keep the token out of client-side code.
-- The app still runs without a token, but `/api/hud-rents` returns fallback FY 2024 San Diego County values.
-- In deployment, set `HUD_API_TOKEN` as a protected environment variable in the hosting provider.
-
-## Available Scripts
+### 3. Start the development server
 
 ```bash
 npm run dev
-npm run build
-npm run start
-npm run lint
 ```
+
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Routes
 
 | Route | Purpose |
-| --- | --- |
-| `/` | Landing page with mission, feature overview, and links into the calculator and methodology. |
-| `/calculator` | Main affordability calculator and neighborhood comparison experience. |
-| `/methodology` | Explanation of model inputs, scoring logic, data assumptions, and limitations. |
-| `/api/hud-rents` | Server route that fetches HUD Fair Market Rent data or returns fallback values. |
+|---|---|
+| `/` | Landing page — hero, mission, cost dimensions, feature section, CTA |
+| `/calculator` | Main affordability calculator with neighborhood comparison and charts |
+| `/neighborhoods` | Explorer for all 42 modeled San Diego neighborhoods |
+| `/commute` | Commute cost analysis — three side-by-side scenarios |
+| `/scenarios` | Pre-built scenario comparison across four income brackets |
+| `/methodology` | Model documentation — inputs, scoring, risk bands, data sources |
+| `/about` | Mission, platform principles, who it is for, and limitations |
+| `/api/hud-rents` | Server route — fetches HUD FMR data or returns fallback values |
 
-## Methodology
+## Calculator Methodology
 
 The calculator converts monthly household inputs into a planning-oriented affordability model.
 
-Core inputs include:
+### Scoring
 
-- Monthly take-home income
-- Rent or mortgage payment
-- Utilities
-- Transportation or commute cost
-- Debt payments
-- Monthly savings goal
-- Neighborhood
-- Work or school location
-- Preferred commute
-- Roommate count
-- Household size
-- Main financial priority
+Every scenario starts at 100. Points are deducted when the model detects pressure:
 
-The model evaluates:
+| Factor | Max penalty |
+|---|---|
+| Housing cost / income ratio (28% → 55%) | 32 pts |
+| Commute-adjusted cost ratio (42% → 70%) | 20 pts |
+| Essential cost ratio (65% → 100%) | 22 pts |
+| Savings goal coverage (negative leftover) | 22 pts |
+| Commute overage (above preferred threshold) | 8 pts |
+| Positive cushion bonus (>8–15% leftover) | +3 to +6 pts |
 
-- Housing cost as a share of income
-- Essential monthly costs as a share of income
-- Housing plus transportation pressure
-- Remaining monthly cash before and after savings
-- Commute time pressure when modeled commute exceeds the preferred commute
-- Neighborhood fit based on affordability, commute, market category, and user priority
+### Risk bands
 
-The output includes a score from 0 to 100, a risk label, warnings, best-fit neighborhoods, risky neighborhoods, scenario comparisons, and expense charts.
+| Band | Score | Meaning |
+|---|---|---|
+| Stable | 74–100 | Manageable burden with meaningful leftover |
+| Stretched | 50–73 | Budget works but margin is thin |
+| High Risk | 0–49 | Insufficient room for savings and unexpected costs |
 
-HUD Fair Market Rent data is used as a San Diego County baseline. It is not treated as live neighborhood-level listing data.
+### Commute pressure
 
-## Limitations
+When the modeled commute exceeds the user's preferred commute, the model adds a planning-proxy pressure amount:
 
-- This tool is an educational planning estimate, not financial advice, lending guidance, or a substitute for a full household budget review.
-- Neighborhood rents in `src/data/neighborhoods.js` are prototype assumptions and should be refreshed before formal use.
-- HUD Fair Market Rent values are county-level baselines, not neighborhood-specific current listings.
-- Commute estimates are directional planning proxies, not live traffic or transit calculations.
-- The model does not currently account for taxes, insurance, childcare, medical costs, lease fees, parking, inflation, credit requirements, or irregular income.
-- Users should verify current listings, lease terms, utilities, insurance, taxes, and personal obligations before making housing decisions.
+```
+pressure_dollars = (commute_minutes − preferred_minutes) × $8
+```
 
-## Roadmap
+This is not a literal transportation bill. It is an indicator that the model uses to reflect hidden time cost.
 
-- Add a current rent-data refresh workflow with source documentation.
-- Add neighborhood-level data provenance and last-updated metadata.
-- Expand affordability inputs for insurance, childcare, parking, and one-time move-in costs.
-- Add saved scenarios and shareable comparison links.
-- Improve chart interactivity and export options.
-- Add automated tests for affordability scoring and HUD fallback behavior.
-- Prepare deployment documentation with environment-variable and privacy guidance.
+## HUD Data and Limitations
 
-## GitHub Workflow
+- **HUD Fair Market Rent** is a county-level HUD estimate used as a reference baseline, not a neighborhood-specific listing price.
+- **Neighborhood rent estimates** in `src/data/neighborhoods.js` are static prototype assumptions. They should be refreshed against current market data before formal research use.
+- **Commute estimates** are spatial planning proxies, not live traffic or transit data.
+- The model does not account for taxes, insurance, childcare, medical costs, parking fees, move-in costs, inflation, credit requirements, or irregular income.
 
-Use a simple branch-and-review workflow:
+This tool is an educational planning estimate, not financial advice. Users should verify current listings, lease terms, and all personal obligations before making housing decisions.
 
-1. Create a feature branch:
+## Available Scripts
 
-   ```bash
-   git checkout -b feature/readme-or-app-update
-   ```
+```bash
+npm run dev      # Development server
+npm run build    # Production build
+npm run start    # Start production build
+npm run lint     # Run ESLint
+```
 
-2. Make a focused change and avoid committing local secrets or generated build folders.
+## File Structure
 
-3. Check the working tree:
+```
+src/
+  app/
+    page.js                     # Landing page
+    layout.js                   # Root layout with footer
+    globals.css                 # Global styles and design system
+    calculator/page.js          # Calculator route
+    neighborhoods/page.js       # Neighborhood explorer
+    commute/page.js             # Commute analysis
+    scenarios/page.js           # Scenario comparison
+    methodology/page.js         # Model documentation
+    about/page.js               # Mission and about
+    api/hud-rents/route.js      # HUD API server route
+  components/
+    AffordabilityCalculator.jsx # Top-level calculator orchestrator
+    CalculatorForm.jsx          # All calculator input fields
+    AffordabilityResults.jsx    # Sticky result panel
+    AffordabilityCharts.jsx     # Expense and risk charts
+    NeighborhoodCards.jsx       # Best-fit and watch-list cards
+    ScenarioComparison.jsx      # Side-by-side scenario table
+    MethodologySection.jsx      # Methodology card section
+    SiteNav.jsx                 # Sticky glass navbar with mobile menu
+    Footer.jsx                  # Site footer
+    DataLastUpdatedBadge.jsx    # HUD data freshness badge
+    HUDRentDisclaimer.jsx       # HUD data disclaimer panel
+    SmoothLink.jsx              # Next.js Link wrapper
+    ThemedSelect.jsx            # Custom dark dropdown
+  data/
+    neighborhoods.js            # 42 neighborhoods, work centers, defaults
+  lib/
+    affordabilityMath.js        # Core model: scoring, risk, commute logic
+    hudRents.js                 # HUD API fetch with fallback chain
+  hooks/
+    useHUDRents.js              # Client hook for HUD rent state
+```
 
-   ```bash
-   git status --short
-   ```
+## Future Improvements
 
-4. Run quality checks:
+- Refresh neighborhood rent estimates from current listing data with provenance and last-updated metadata
+- Add saved scenarios and shareable comparison links
+- Add neighborhood-level HUD sub-area data where available
+- Improve chart interactivity and export options
+- Add automated tests for affordability scoring and HUD fallback behavior
+- Expand inputs for insurance, childcare, parking, and one-time move-in costs
+- Build a neighborhood detail page with full data breakdown
+- Add filterability to the neighborhood explorer
 
-   ```bash
-   npm run lint
-   npm run build
-   ```
+## Deployment
 
-5. Commit only intentional files:
+Deploy to Vercel or any Next.js-compatible host. Set `HUD_API_TOKEN` as a protected environment variable in the hosting provider's settings. Do not commit `.env.local`.
 
-   ```bash
-   git add README.md
-   git commit -m "Improve project README"
-   ```
-
-6. Push the branch and open a pull request:
-
-   ```bash
-   git push origin feature/readme-or-app-update
-   ```
-
-In pull requests, include the purpose of the change, screenshots for UI updates, any setup or environment changes, and the commands used to verify the work.
+```bash
+npm run build   # Verify the build passes before deployment
+```
